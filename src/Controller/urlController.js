@@ -2,6 +2,7 @@ const mongoose = require ("mongoose")
 const urlModel =require('../Model/urlModel')
 const shortid = require ('shortid')
 const validUrl =require('valid-url')
+const redirect = require('redirect-uri')
 
 
 const isvalid = function(data){
@@ -25,7 +26,7 @@ const urlShorten =  async function(req,res){
 
 
         let code=  shortid.generate(longUrl)
-        let short = `https://localhost:3000/${code}`
+        let short = `http://localhost:3000/${code}`
 
         let document ={
             longUrl: longUrl,
@@ -45,7 +46,30 @@ const urlShorten =  async function(req,res){
     }
 }
 
+const getUrl = async function(req,res){
+        try {
+            
+            if(!shortid.isValid(req.params.urlCode)) return res.status(400).send({ status: false, message: 'Wrong UrlCode' })
+
+            const url = await urlModel.findOne({
+                urlCode: req.params.urlCode
+            })
+            if (url) {
+                return res.status(302).redirect(url.longUrl)
+            } else {
+                return res.status(404).send({ status: false, message: 'No URL Found' })
+            }
+        
+        }
+        catch (err) {
+            console.error(err)
+            res.status(500).send({ status: false, message: err.message })
+    }
+    }
+
+
 
 module.exports={
-    urlShorten
+    urlShorten,
+     getUrl
 }

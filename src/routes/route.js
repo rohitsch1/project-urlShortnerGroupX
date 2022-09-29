@@ -8,6 +8,10 @@ router.get("/test-me",function(req,res){
 })
 
 
+
 router.post ('/url/shorten',urlCode.urlShorten)
+router.get('/:urlCode',urlCode.getUrl)
+
+
 
 module.exports = router;  
