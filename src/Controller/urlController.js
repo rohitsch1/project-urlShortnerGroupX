@@ -11,6 +11,15 @@ const isvalid = function(data){
     return true
 }
 
+const check =function checkCase(ch) {
+       if (ch == ch.toUpperCase()) {
+          return false;
+       }
+       if (ch == ch.toLowerCase()){
+          return true;
+       }
+ }
+
 const urlShorten =  async function(req,res){
     try{
         let {longUrl} =req.body 
@@ -18,14 +27,16 @@ const urlShorten =  async function(req,res){
 
         if(!isvalid(longUrl)) return res.status(400).send({status:false , data: "provide longUrl"})
         if(!validUrl.isUri(longUrl))  return res.status(400).send({status:false , data: "invalid longUrl"})
+        if(!check(longUrl)) return res.status(400).send({status:false , msg : "link should be in lowercase "})
 
         let findUrl = await urlModel.findOne({longUrl: longUrl})
         if(findUrl) {
             return res.status(200).send({status:true , msg : "Url is already present in DB",data: findUrl})
         }
+        
 
 
-        let code=  shortid.generate(longUrl)
+        let code=  shortid.generate()
         let short = `http://localhost:3000/${code}`
 
         let document ={
