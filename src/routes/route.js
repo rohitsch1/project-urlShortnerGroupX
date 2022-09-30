@@ -12,6 +12,11 @@ router.get("/test-me",function(req,res){
 router.post ('/url/shorten',urlCode.urlShorten)
 router.get('/:urlCode',urlCode.getUrl)
 
+router.all("/*", function (req, res) {
+    res
+      .status(404)
+      .send({ status: false, msg: " please provide valid api " });
+  });
 
 
 module.exports = router;  
